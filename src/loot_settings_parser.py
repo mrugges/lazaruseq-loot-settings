@@ -2,13 +2,14 @@ import re
 
 import pandas as pd
 import fileinput
+import logging
+from src.config import eq
 
 
 class LootSettingsParser:
 
     def __init__(self):
-
-        self.loot_settings_path = "C:\pl\Project Lazarus\E3_RoF2\Macros\e3 Macro Inis\Loot Settings.ini"
+        self.loot_settings_path = eq["loot_settings_path"]
         # how much higher should bazaar historical average price
         # be over vendor price to not be considered vendor trash
         self.pct_over_hist_average = .5
@@ -24,15 +25,17 @@ class LootSettingsParser:
         return n.rstrip().replace(";", ":") if n else ''
 
     def run(self):
+        logging.info("Welcome to Lazarus Project Loot Settings Parser."
+        " Please report any warnings or issues at https://github.com/mrugges/lazaruseq-loot-settings/issues/new")
+
         with open(self.loot_settings_path) as f:
 
             for line_number, line in enumerate(f):
-                print(line_number, line)
-
+                #logging.info(f"{line_number} {line}")
                 matches = self.line_pattern.match(line)
                 if not matches:
-                    print("unexpected line, check regexp for:")
-                    print(line)
+                    logging.warning("unexpected line, check regexp for:")
+                    logging.warning(line)
                     continue
 
                 if matches.group(1):
@@ -79,6 +82,7 @@ class LootSettingsParser:
 
         print("vendor trash:")
         print(vendor_trash)
+        logging.info(vendor_trash)
 
         self.bazaarable = vs.where(
             ~vs['name'].isin(vendor_trash['name'])
@@ -141,7 +145,3 @@ class LootSettingsParser:
 
         print("updated loot settings.ini with vendor trash")
         return set_to_destroy
-
-
-
-LootSettingsParser().run()
