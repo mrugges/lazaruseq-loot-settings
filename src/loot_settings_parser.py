@@ -95,7 +95,7 @@ class LootSettingsParser:
         baz_ord = self.bazaarable[
             ["name", "vendor_price", self.item_stat_col_to_filter]
         ].sort_values(by=self.item_stat_col_to_filter, ascending=False)
-        logging.info(baz_ord)
+        logging.info(baz_ord.to_string())
         baz_ord.to_csv("bazaarable.log", sep="\t")
 
         destroying = self.process_vendor_trash(vendor_trash)
